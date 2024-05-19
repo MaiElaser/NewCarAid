@@ -29,6 +29,8 @@ const userSchema = new mongoose.Schema({
     enum: categoryOptions
     },
     vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle' }],
+    bankDetails: { type: mongoose.Schema.Types.ObjectId, ref: 'Bank' },
+    
     
     resetPasswordToken : String,
     resetPasswordExpires : Date

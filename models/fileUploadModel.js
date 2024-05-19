@@ -1,30 +1,29 @@
-const mongoose = require("mongoose");
-const upload = require('../config/multerConfig');
+const mongoose = require('mongoose');
 
-
-const uploadedFileSchema = new mongoose.Schema({
+const fileSchema = new mongoose.Schema({
+  originalname: {
+    type: String,
+    required: true
+  },
   filename: {
     type: String,
-    required: true,
+    required: true
   },
   path: {
     type: String,
-    required: true,
+    required: true
   },
   size: {
     type: Number,
-    required: true,
+    required: true
   },
-  mimeType: {
-    type: String,
-    required: true,
-  },
-  uploadedAt: {
+  uploadDate: {
     type: Date,
-    default: Date.now,
-  },
+    default: Date.now
+  }
 });
 
-const UploadedFile = mongoose.model("UploadedFile", uploadedFileSchema);
+const File = mongoose.model('File', fileSchema);
 
-module.exports = UploadedFile;
+module.exports = File;
+

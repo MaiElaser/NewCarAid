@@ -19,8 +19,8 @@ app.get("/", (req, res) => res.send("Hello world!"));
 
 app.use("/api/users", require("./routes/userRoute"));
 app.use("/api/location", require("./routes/locationRoute")); // Add this line
-//app.use("/api/upload", require("./routes/multerRoute")); // Mount MulterRoute to handle file uploads
-app.use('/api', require("./routes/multerRoute")); 
+app.use("/api/upload", require("./routes/multerRoute")); // Mount MulterRoute to handle file uploads
+//app.use('/api', require("./routes/multerRoute")); 
 
 const port = 9090;
 

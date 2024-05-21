@@ -1,8 +1,7 @@
 const express = require("express");
-const { geocodeAddress } = require("../controllers/locationController");
 const router = express.Router();
+const { geocodeAddress } = require("../controllers/locationController");
 
-router.post("/geocode", geocodeAddress);
+router.get("/", geocodeAddress);
 
 module.exports = router;
-

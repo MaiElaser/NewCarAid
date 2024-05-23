@@ -109,43 +109,86 @@ const User = require("../models/userModel");
 const Vehicle = require("../models/vehicleModel");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const { sendOTP } = require("../utils/otp");
+
 
 // Register user
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, mobileNumber, password, confirmPassword , Category } = req.body;
+  const { username, email, mobileNumber, password, confirmPassword, Category } = req.body;
+  
   if (!username || !email || !mobileNumber || !password || !confirmPassword || !Category) {
-    res.status(400);
-    throw new Error("Please fill the required fields!");
+    return res.status(400).json({ error: "Please fill the required fields!" });
   }
+
   const userAvailable = await User.findOne({ email });
   if (userAvailable) {
-    res.status(400);
-    throw new Error("User is already registered !");
+    return res.status(400).json({ error: "User is already registered!" });
   }
+
   if (password !== confirmPassword) {
-    res.status(400);
-    throw new Error("Password do not match!");
+    return res.status(400).json({ error: "Passwords do not match!" });
   }
 
-  // Hash Password
-  const hashedPassword = await bcrypt.hash(password, 10);
-  console.log("Hashed Password", hashedPassword);
-  const user = await User.create({
-    username,
-    email,
-    mobileNumber,
-    password: hashedPassword,
-    Category,
-  });
+  try {
+    // Hash Password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("Hashed Password", hashedPassword);
 
-  console.log(`User created ${user}`);
-  if (user) {
-    res.status(201).json({ _id: user.id, email: user.email });
-  } else {
-    res.status(400);
-    throw new Error("User Data is not valid");
+    // Create User
+    const user = await User.create({
+      username,
+      email,
+      mobileNumber,
+      password: hashedPassword,
+      Category,
+    });
+
+    console.log(`User created ${user}`);
+    
+    return res.status(201).json({ _id: user.id, email: user.email });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
+//OTP
+if (user) {
+  await sendOTP(user); // Send OTP after user registration
+  res.status(201).json({ _id: user.id, email: user.email, message: "OTP sent to your email" });
+} else {
+  res.status(400);
+  throw new Error("User data is not valid");
+}
+
+
+// Verify OTP
+const verifyOTP = asyncHandler(async (req, res) => {
+const { email, otp } = req.body;
+
+if (!email || !otp) {
+  res.status(400);
+  throw new Error("Please provide email and OTP");
+}
+
+const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
+
+if (!user) {
+  res.status(400);
+  throw new Error("Invalid or expired OTP");
+}
+
+// OTP is valid
+user.otp = null;
+user.otpExpires = null;
+await user.save();
+
+res.status(200).json({ message: "OTP verified successfully" });
+});
+ 
+  
 
 // Login user
 const loginUser = asyncHandler(async (req, res) => {
@@ -181,7 +224,7 @@ const currentUser = asyncHandler(async (req, res) => {
   res.json(req.user);
 });
 
-// Forget password
+
 // const forgetPassword = async (req, res) => {
 //   const { email } = req.body;
 

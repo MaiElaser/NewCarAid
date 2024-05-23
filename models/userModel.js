@@ -30,8 +30,6 @@ const userSchema = new mongoose.Schema({
     bankDetails: { type: mongoose.Schema.Types.ObjectId, ref: 'Bank' },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
-    otp: String,
-    otpExpires: Date,
 }, {
     timestamps: true,
 });

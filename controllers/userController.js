@@ -109,8 +109,7 @@ const User = require("../models/userModel");
 const Vehicle = require("../models/vehicleModel");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const { sendOTP } = require("../utils/otp");
-
+  
 
 // Register user
 const registerUser = asyncHandler(async (req, res) => {
@@ -154,40 +153,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 
 
-//OTP
-if (user) {
-  await sendOTP(user); // Send OTP after user registration
-  res.status(201).json({ _id: user.id, email: user.email, message: "OTP sent to your email" });
-} else {
-  res.status(400);
-  throw new Error("User data is not valid");
-}
 
-
-// Verify OTP
-const verifyOTP = asyncHandler(async (req, res) => {
-const { email, otp } = req.body;
-
-if (!email || !otp) {
-  res.status(400);
-  throw new Error("Please provide email and OTP");
-}
-
-const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
-
-if (!user) {
-  res.status(400);
-  throw new Error("Invalid or expired OTP");
-}
-
-// OTP is valid
-user.otp = null;
-user.otpExpires = null;
-await user.save();
-
-res.status(200).json({ message: "OTP verified successfully" });
-});
- 
   
 
 // Login user

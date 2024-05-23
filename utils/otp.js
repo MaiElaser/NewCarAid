@@ -1,31 +1,47 @@
-const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const User = require("../models/userModel");
 
 const sendOTP = async (user) => {
-  const otp = crypto.randomBytes(3).toString("hex"); // Generate a 6-character OTP
+  const otp = generateOTP(); // Generate OTP (you can use your own logic here)
   const otpExpires = Date.now() + 3600000; // OTP expires in 1 hour
 
+  // Update user document with OTP and expiry
   user.otp = otp;
   user.otpExpires = otpExpires;
   await user.save();
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.maielaser22@gmail.com,
-      pass: process.env.acrc ozrq knsz iqbs,
-    },
-  });
+  try {
+    // Create transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USERNAME, // Your email address
+        pass: process.env.EMAIL_PASSWORD, // Your email password
+      },
+    });
 
-  const mailOptions = {
-    from: process.env.maielaser22@gmail.com,
-    to: user.email,
-    subject: "Your OTP Code",
-    text: `Your OTP code is ${otp}. It will expire in 1 hour.`,
-  };
+    // Email options
+    const mailOptions = {
+      from: process.env.EMAIL_USERNAME, // Your email address
+      to: user.email,
+      subject: "Your OTP Code",
+      text: `Your OTP code is ${otp}. It will expire in 1 hour.`,
+    };
 
-  await transporter.sendMail(mailOptions);
+    // Send Email
+    await transporter.sendMail(mailOptions);
+    console.log(`OTP sent to ${user.email}`);
+  } catch (error) {
+    console.error("Error sending OTP via Email:", error);
+    throw new Error("Error sending OTP via Email");
+  }
+};
+
+const generateOTP = () => {
+  // Generate OTP logic (e.g., using random numbers or crypto library)
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 module.exports = { sendOTP };
+
+
+

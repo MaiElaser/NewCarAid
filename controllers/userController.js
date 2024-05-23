@@ -109,14 +109,16 @@ const User = require("../models/userModel");
 const Vehicle = require("../models/vehicleModel");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const { sendOTP } = require("../utils/otp");
+const sendOTP  = require("../utils/otp");
 
 
 // Register user
+
+
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, mobileNumber, password, confirmPassword, Category } = req.body;
+  const { username, email, mobileNumber, password, confirmPassword, category, otp } = req.body;
   
-  if (!username || !email || !mobileNumber || !password || !confirmPassword || !Category) {
+  if (!username || !email || !mobileNumber || !password || !confirmPassword || !category || !otp) {
     return res.status(400).json({ error: "Please fill the required fields!" });
   }
 
@@ -140,8 +142,15 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       mobileNumber,
       password: hashedPassword,
-      Category,
+      category,
+      otp, // Store OTP in user document
+      otpExpires: Date.now() + 3600000, // OTP expires in 1 hour
+
     });
+
+   
+    // Send OTP after user registration
+    await sendOTP(user);
 
     console.log(`User created ${user}`);
     
@@ -151,9 +160,28 @@ const registerUser = asyncHandler(async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+//Vertify
+const verifyOTP = async (email, otp) => {
+  try {
+    const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
 
+    if (!user) {
+      throw new Error("Invalid or expired OTP");
+    }
 
+    // OTP is valid, clear OTP fields
+    user.otp = null;
+    user.otpExpires = null;
+    await user.save();
 
+    return true; // OTP verification successful
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return false; // OTP verification failed
+  }
+};
+//Ahmed-OTP
+/*
 //OTP
 if (user) {
   await sendOTP(user); // Send OTP after user registration
@@ -187,8 +215,8 @@ await user.save();
 
 res.status(200).json({ message: "OTP verified successfully" });
 });
- 
-  
+
+  */
 
 // Login user
 const loginUser = asyncHandler(async (req, res) => {
@@ -218,6 +246,8 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Email or password is not valid");
   }
 });
+
+
 
 // Current user
 const currentUser = asyncHandler(async (req, res) => {
@@ -442,4 +472,5 @@ module.exports = {
   forgetPassword,
   resetPassword,
   registerVehicle,
+  verifyOTP,
 };

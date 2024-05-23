@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, currentUser, loginUser, forgetPassword, resetPassword, registerVehicle,verifyOTP,} = require("../controllers/userController");
+const { registerUser, currentUser, loginUser, forgetPassword, resetPassword, registerVehicle, verifyOTP,} = require("../controllers/userController");
 const validateToken = require("../middleware/validateTokenHandler");
 const { reset } = require("nodemon");
 

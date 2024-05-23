@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please enter the password"],
     },
-    Category: {
+    category: {
         type: String,
         required: [true, "Category yourself / Type of service"],
         enum: categoryOptions
@@ -37,3 +37,4 @@ const userSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("User", userSchema);
+

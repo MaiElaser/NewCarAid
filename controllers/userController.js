@@ -349,6 +349,11 @@ const registerVehicle = asyncHandler(async (req, res) => {
 
     console.log("User found:", user); // Log the user object retrieved from the database
 
+    // Check if the user is a Car Owner
+    if (user.Category !== 'Car Owner') {
+      return res.status(403).json({ error: "Only Car Owners are allowed to register vehicles" });
+    }
+
     // Create a new vehicle with the owner field set to the current user's ID
     const vehicle = await Vehicle.create({
       carType,
@@ -381,6 +386,7 @@ const registerVehicle = asyncHandler(async (req, res) => {
     return res.status(500).json({ error: "Failed to register vehicle" });
   }
 });
+
 
 
 

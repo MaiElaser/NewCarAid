@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+/*const nodemailer = require("nodemailer");
 
 const sendOTP = async (user) => {
   const otp = generateOTP(); // Generate OTP (you can use your own logic here)
@@ -42,6 +42,6 @@ const generateOTP = () => {
 };
 
 module.exports = { sendOTP };
-
+*/
 
 

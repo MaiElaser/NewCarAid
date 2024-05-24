@@ -2,7 +2,7 @@ const express = require("express");
 const { registerUser, currentUser, loginUser, forgetPassword, resetPassword, registerVehicle} = require("../controllers/userController");
 const validateToken = require("../middleware/validateTokenHandler");
 const { reset } = require("nodemon");
-//const {sendOTP} = require("../utils/otp");
+const {sendOTP} = require("../utils/otp");
 
 const router = express.Router();
 router.post("/register", registerUser); 

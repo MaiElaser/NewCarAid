@@ -2,7 +2,7 @@
   "name": "caraid-4",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js", 
+  "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
     "app": "nodemon app.js",

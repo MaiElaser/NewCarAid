@@ -12,7 +12,6 @@ const app = express();
 // Connect Database
 connectDB();
 
-
 //old
 app.use(express.json());
 app.use(cors());

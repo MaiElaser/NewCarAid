@@ -6,16 +6,64 @@ const User = require("../models/userModel");
 const Vehicle = require("../models/vehicleModel");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const sendOTP  = require("../utils/otp");
+const {sendOTP}  = require("../utils/otp");
 
 
 // Register user
-
-
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, mobileNumber, password, confirmPassword, category, otp } = req.body;
+  console.log('Request body:', req.body);  // Log the request body for debugging
+
+  const { username, email, mobileNumber, password, confirmPassword, category } = req.body;
+
+  // Check required fields
+  if (!username || !email || !mobileNumber || !password || !confirmPassword || !category) {
+    console.error('Missing required fields');
+    return res.status(400).json({ error: "Please fill the required fields!" });
+  }
+
+  // Check if user already exists
+  const userAvailable = await User.findOne({ email });
+  if (userAvailable) {
+    return res.status(400).json({ error: "User is already registered!" });
+  }
+
+  // Check if passwords match
+  if (password !== confirmPassword) {
+    return res.status(400).json({ error: "Passwords do not match!" });
+  }
+
+  try {
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = await User.create({
+      username,
+      email,
+      mobileNumber,
+      password: hashedPassword,
+      category,
+    });
+
+    // Send OTP after user registration
+    await sendOTP(user);
+
+    // Respond with user details
+    return res.status(201).json({ _id: user.id, email: user.email });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+//OldReg
+/*
+const registerUser = asyncHandler(async (req, res) => {
+  const { username, email, mobileNumber, password, confirmPassword, category} = req.body;
   
-  if (!username || !email || !mobileNumber || !password || !confirmPassword || !category || !otp) {
+  if (!username || !email || !mobileNumber || !password || !confirmPassword || !category) {
     return res.status(400).json({ error: "Please fill the required fields!" });
   }
 
@@ -57,7 +105,42 @@ const registerUser = asyncHandler(async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+*/
 //Vertify
+const verifyOTP = asyncHandler(async (req, res) => {
+  const { mobileNumber, otp } = req.body;
+
+  // Check required fields
+  if (!mobileNumber || !otp) {
+    return res.status(400).json({ error: "Please provide mobile number and OTP" });
+  }
+
+  try {
+    // Find user with matching mobile number, OTP, and check if OTP is still valid
+    const user = await User.findOne({
+      mobileNumber,
+      otp,
+      otpExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired OTP" });
+    }
+
+    // Clear OTP fields after successful verification
+    user.otp = null;
+    user.otpExpires = null;
+    await user.save();
+
+    return res.status(200).json({ message: "OTP verified successfully" });
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//OldVerify
+/*
 const verifyOTP = async (email, otp) => {
   try {
     const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
@@ -77,43 +160,7 @@ const verifyOTP = async (email, otp) => {
     return false; // OTP verification failed
   }
 };
-//Ahmed-OTP
-/*
-//OTP
-if (user) {
-  await sendOTP(user); // Send OTP after user registration
-  res.status(201).json({ _id: user.id, email: user.email, message: "OTP sent to your email" });
-} else {
-  res.status(400);
-  throw new Error("User data is not valid");
-}
-
-
-// Verify OTP
-const verifyOTP = asyncHandler(async (req, res) => {
-const { email, otp } = req.body;
-
-if (!email || !otp) {
-  res.status(400);
-  throw new Error("Please provide email and OTP");
-}
-
-const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
-
-if (!user) {
-  res.status(400);
-  throw new Error("Invalid or expired OTP");
-}
-
-// OTP is valid
-user.otp = null;
-user.otpExpires = null;
-await user.save();
-
-res.status(200).json({ message: "OTP verified successfully" });
-});
-
-  */
+*/
 
 // Login user
 const loginUser = asyncHandler(async (req, res) => {

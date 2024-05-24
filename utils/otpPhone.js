@@ -1,4 +1,4 @@
-const twilio = require("twilio");
+/* const twilio = require("twilio");
 
 const accountSid = 'your_account_sid'; // Your Twilio account SID
 const authToken = 'your_auth_token'; // Your Twilio auth token
@@ -35,3 +35,4 @@ const generateOTP = () => {
 };
 
 module.exports = { sendOTP };
+*/

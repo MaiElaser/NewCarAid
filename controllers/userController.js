@@ -6,16 +6,12 @@ const User = require("../models/userModel");
 const Vehicle = require("../models/vehicleModel");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const sendOTP  = require("../utils/otp");
-
 
 // Register user
-
-
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, mobileNumber, password, confirmPassword, category, otp } = req.body;
+  const { username, email, mobileNumber, password, confirmPassword, category } = req.body;
   
-  if (!username || !email || !mobileNumber || !password || !confirmPassword || !category || !otp) {
+  if (!username || !email || !mobileNumber || !password || !confirmPassword || !category ) {
     return res.status(400).json({ error: "Please fill the required fields!" });
   }
 
@@ -39,81 +35,16 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       mobileNumber,
       password: hashedPassword,
-      category,
-      otp, // Store OTP in user document
-      otpExpires: Date.now() + 3600000, // OTP expires in 1 hour
-
+      category
     });
-
-   
-    // Send OTP after user registration
-    await sendOTP(user);
-
-    console.log(`User created ${user}`);
     
+    // Respond with success message
     return res.status(201).json({ _id: user.id, email: user.email });
   } catch (error) {
     console.error("Error registering user:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-//Vertify
-const verifyOTP = async (email, otp) => {
-  try {
-    const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
-
-    if (!user) {
-      throw new Error("Invalid or expired OTP");
-    }
-
-    // OTP is valid, clear OTP fields
-    user.otp = null;
-    user.otpExpires = null;
-    await user.save();
-
-    return true; // OTP verification successful
-  } catch (error) {
-    console.error("Error verifying OTP:", error);
-    return false; // OTP verification failed
-  }
-};
-//Ahmed-OTP
-/*
-//OTP
-if (user) {
-  await sendOTP(user); // Send OTP after user registration
-  res.status(201).json({ _id: user.id, email: user.email, message: "OTP sent to your email" });
-} else {
-  res.status(400);
-  throw new Error("User data is not valid");
-}
-
-
-// Verify OTP
-const verifyOTP = asyncHandler(async (req, res) => {
-const { email, otp } = req.body;
-
-if (!email || !otp) {
-  res.status(400);
-  throw new Error("Please provide email and OTP");
-}
-
-const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
-
-if (!user) {
-  res.status(400);
-  throw new Error("Invalid or expired OTP");
-}
-
-// OTP is valid
-user.otp = null;
-user.otpExpires = null;
-await user.save();
-
-res.status(200).json({ message: "OTP verified successfully" });
-});
-
-  */
 
 // Login user
 const loginUser = asyncHandler(async (req, res) => {
@@ -144,71 +75,12 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 // Current user
 const currentUser = asyncHandler(async (req, res) => {
   res.json(req.user);
 });
 
-
-// const forgetPassword = async (req, res) => {
-//   const { email } = req.body;
-
-//   try {
-//     // Check if user exists with provided email
-//     const user = await User.findOne({ email });
-
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-//     // Generate password reset token
-//     const token = crypto.randomBytes(20).toString("hex");
-
-//     // Update user with reset token and expiry (you need to define these fields in your User model)
-//     user.resetPasswordToken = token;
-//     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiry
-
-//     await user.save();
-
-//     // Create transporter
-//     const transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: {
-//         user: "maielaser22@gmail.com",
-//         pass: "dzif eqet ptml qojs",
-//       },
-//     });
-
-//     let mailOptions = {
-//       from: "CarAidEgy@gmail.com",
-//       to: user.email, // Change here
-//       subject: "Test Email",
-//       text: "This is a test mail sent from Nodemailer",
-//     };
-
-//     // Send Email
-//     transporter.sendMail(mailOptions, (error, info) => {
-//       if (error) {
-//         console.log("Error occurred:", error);
-//         return res
-//           .status(500)
-//           .json({ error: "Error occurred while sending email" });
-//       } else {
-//         console.log("Email sent:", info.response);
-//         return res.status(200).json({
-//           message:
-//             "Password reset initiated. Check your email for instructions.",
-//         });
-//       }
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: "Internal server error" });
-//   }
-// };
-
+// Forget password
 const forgetPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -223,46 +95,14 @@ const forgetPassword = async (req, res) => {
     // Generate password reset token
     const token = crypto.randomBytes(20).toString("hex");
 
-    // Update user with reset token and expiry (you need to define these fields in your User model)
+    // Update user with reset token and expiry
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiry
-
     await user.save();
 
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "maielaser22@gmail.com", // Your email address
-        pass: "acrc ozrq knsz iqbs ", // Your email password
-      },
-    });
-
-    const mailOptions = {
-      from: "maielaser22@gmail.com", // Your email address
-      to: user.email,
-      subject: "Password Reset",
-      text:
-        `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n` +
-        `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
-        `http://${req.headers.host}/reset-password/${token}\n\n` +
-        `If you did not request this, please ignore this email and your password will remain unchanged.\n`,
-    };
-
-    // Send Email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log("Error occurred:", error);
-        return res
-          .status(500)
-          .json({ error: "Error occurred while sending email" });
-      } else {
-        console.log("Email sent:", info.response);
-        return res.status(200).json({
-          message:
-            "Password reset initiated. Check your email for instructions.",
-        });
-      }
+    // Respond with success message
+    return res.status(200).json({
+      message: "Password reset initiated. Check your email for instructions.",
     });
   } catch (error) {
     console.error(error);
@@ -296,8 +136,7 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// registerVehicle 
-
+// Register Vehicle
 const registerVehicle = asyncHandler(async (req, res) => {
   const { carType, brand, model, manufacturer, plateNo, color } = req.body;
 
@@ -306,18 +145,13 @@ const registerVehicle = asyncHandler(async (req, res) => {
   }
 
   try {
-    console.log("Decoded Token:", req.user); // Log the decoded token
-    console.log("Decoded User:", req.user); // Log the decoded user from the token
-
     // Fetch the user based on the decoded token's user ID
-    const user = await User.findById(req.user.id); // Check if req.user.id works for fetching the user
+    const user = await User.findById(req.user.id);
 
     if (!user) {
       console.log("User not found in database.");
       return res.status(404).json({ error: "User not found" });
     }
-
-    console.log("User found:", user); // Log the user object retrieved from the database
 
     // Check if the user is a Car Owner
     if (user.Category !== 'Car Owner') {
@@ -335,10 +169,8 @@ const registerVehicle = asyncHandler(async (req, res) => {
       owner: req.user._id,
     });
 
-    console.log(`Vehicle created: ${vehicle}`);
-
     // Update the user's vehicles array with the new vehicle ID
-    user.vehicles.push(vehicle._id); // Assuming 'vehicles' is the array field in your User model
+    user.vehicles.push(vehicle._id);
     await user.save();
 
     return res.status(201).json({
@@ -357,11 +189,6 @@ const registerVehicle = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
-
-
 module.exports = {
   registerUser,
   loginUser,
@@ -369,5 +196,4 @@ module.exports = {
   forgetPassword,
   resetPassword,
   registerVehicle,
-  verifyOTP,
 };

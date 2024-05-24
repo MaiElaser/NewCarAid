@@ -6,11 +6,11 @@ const cors = require("cors");
 const dotenv = require("dotenv").config();
 const nodemailer = require("nodemailer");
 const validateToken = require("./middleware/validateTokenHandler");
-const app = express();
-const { sendOtp } = require("./utils/otp");
+
+
 const bodyParser = require('body-parser');
 const User = require('./models/userModel'); // Adjust the path as necessary
-
+const app = express();
 // Connect Database
 connectDB();
 

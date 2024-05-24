@@ -25,3 +25,5 @@ app.use("/api/upload", require("./routes/multerRoute")); // Mount MulterRoute to
 app.use("/api/users",require("./routes/bankRoute"),validateToken);
 
 
+
+

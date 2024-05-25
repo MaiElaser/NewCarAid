@@ -32,10 +32,14 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpires: Date,
   otp: String,
   otpExpires: Date,
+  files: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "File",
+}],
 }, {
   timestamps: true,
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);
 
 

@@ -28,10 +28,11 @@ const userSchema = new mongoose.Schema({
   },
   vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle' }],
   bankDetails: { type: mongoose.Schema.Types.ObjectId, ref: 'Bank' },
+
+  subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'UserSubscription' },
+  
   resetPasswordToken: String,
   resetPasswordExpires: Date,
-  otp: String,
-  otpExpires: Date,
   files: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "File",

@@ -12,16 +12,18 @@ const app = express();
 // Connect Database
 connectDB();
 
-//old
+
 app.use(express.json());
 app.use(cors());
 
 app.get("/", (req, res) => res.send("Hello world!"));
 
-app.use("/api/users", require("./routes/userRoute"));
+//app.use("/api/users", require("./routes/userRoute"));
 app.use("/api/location", require("./routes/locationRoute")); // Add this line
-app.use("/api/upload", require("./routes/multerRoute")); // Mount MulterRoute to handle file uploads
+//app.use("/api/upload", require("./routes/multerRoute")); // Mount MulterRoute to handle file uploads
 app.use("/api/users",require("./routes/bankRoute"),validateToken);
+
+app.use("/api/subscription", require("./routes/subscriptionRoute"));
 
 const port = 9090;
 

@@ -5,12 +5,23 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Vehicle = require("../models/vehicleModel");
 const crypto = require("crypto");
+<<<<<<< Updated upstream
 
 // Register user
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, mobileNumber, password, confirmPassword, category, role } = req.body;
   
   if (!username || !email || !mobileNumber || !password || !confirmPassword || !category || !role) {
+=======
+const nodemailer = require("nodemailer");
+const Wallet = require('../models/walletModel');
+
+// Register user
+const registerUser = asyncHandler(async (req, res) => {
+  const { username, email, mobileNumber, password, confirmPassword, role } = req.body;
+  
+  if (!username || !email || !mobileNumber || !password || !confirmPassword || !role ) {
+>>>>>>> Stashed changes
     return res.status(400).json({ error: "Please fill the required fields!" });
   }
 
@@ -37,7 +48,14 @@ const registerUser = asyncHandler(async (req, res) => {
       category,
       role,
     });
-    
+      // Create wallet for car owners and mechanics
+      if (role === 'car_owner' || role === 'mechanic') {
+        const wallet = new Wallet({
+            userId: user._id,
+            balance: 0,
+        });
+        await wallet.save();
+    }
     // Respond with success message
     return res.status(201).json({ _id: user.id, email: user.email, role: user.role });
   } catch (error) {

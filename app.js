@@ -21,9 +21,17 @@ app.get("/", (req, res) => res.send("Hello world!"));
 app.use("/api/users", require("./routes/userRoute"));
 app.use("/api/location", require("./routes/locationRoute")); // Add this line
 app.use("/api/upload", require("./routes/multerRoute")); // Mount MulterRoute to handle file uploads
+<<<<<<< Updated upstream
 app.use("/api/userss", require("./routes/bankRoute"), validateToken);
+=======
+app.use("/api/users/bank",require("./routes/bankRoute"),validateToken);
+
+>>>>>>> Stashed changes
 app.use("/api/subscription", require("./routes/subscriptionRoute"));
 app.use("/api/records", require("./routes/records"));
+
+app.use('/api',require("./routes/searchRoute"));
+app.use('/api/users/wallet',require("./routes/walletRoute"));
 
 const port = 9090;
 

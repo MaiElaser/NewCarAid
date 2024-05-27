@@ -3,8 +3,9 @@ const { getWalletBalance, addFunds, withdrawFunds } = require('../controllers/wa
 
 const router = express.Router();
 
-router.get('/wallet/:userId', getWalletBalance);
-router.post('/wallet/:userId/add', addFunds);
-router.post('/wallet/:userId/withdraw', withdrawFunds);
+router.get('/:userId', getWalletBalance);
+router.post('/:userId/add', addFunds);
+router.post('/:userId/withdraw', withdrawFunds);
 
 module.exports = router;
+

@@ -5,13 +5,12 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Vehicle = require("../models/vehicleModel");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 
 // Register user
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, mobileNumber, password, confirmPassword, category } = req.body;
+  const { username, email, mobileNumber, password, confirmPassword, category, role } = req.body;
   
-  if (!username || !email || !mobileNumber || !password || !confirmPassword || !category ) {
+  if (!username || !email || !mobileNumber || !password || !confirmPassword || !category || !role) {
     return res.status(400).json({ error: "Please fill the required fields!" });
   }
 
@@ -35,11 +34,12 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       mobileNumber,
       password: hashedPassword,
-      category
+      category,
+      role,
     });
     
     // Respond with success message
-    return res.status(201).json({ _id: user.id, email: user.email });
+    return res.status(201).json({ _id: user.id, email: user.email, role: user.role });
   } catch (error) {
     console.error("Error registering user:", error);
     return res.status(500).json({ error: "Internal server error" });
@@ -62,6 +62,7 @@ const loginUser = asyncHandler(async (req, res) => {
           username: user.username,
           email: user.email,
           id: user.id,
+          role: user.role,
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
@@ -154,7 +155,7 @@ const registerVehicle = asyncHandler(async (req, res) => {
     }
 
     // Check if the user is a Car Owner
-    if (user.Category !== 'Car Owner') {
+    if (user.category !== 'Car Owner') {
       return res.status(403).json({ error: "Only Car Owners are allowed to register vehicles" });
     }
 

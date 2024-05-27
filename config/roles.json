@@ -1,0 +1,26 @@
+{
+  "roles": [
+    {
+      "name": "admin",
+      "permissions": [
+        "create_record",
+        "read_record",
+        "update_record",
+        "delete_record"
+      ]
+    },
+
+    {
+      "name": "Car Owner",
+      "permissions": ["read_record", "update_record"]
+    },
+    {
+      "name": "Shop Owner",
+      "permissions": ["read_record", "update_record"]
+    },
+    {
+      "name": "Mechanic",
+      "permissions": ["read_record", "update_record"]
+    }
+  ]
+}

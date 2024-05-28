@@ -36,7 +36,6 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       mobileNumber,
       password: hashedPassword,
-      category,
       role,
     });
       // Create wallet for car owners and mechanics

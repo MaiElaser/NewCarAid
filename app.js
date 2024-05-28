@@ -27,8 +27,8 @@ app.use("/api/users/bank",require("./routes/bankRoute"),validateToken);
 app.use("/api/subscription", require("./routes/subscriptionRoute"));
 app.use("/api/records", require("./routes/records"));
 
-app.use('/api',require("./routes/searchRoute"));
-app.use('/api/users/wallet',require("./routes/walletRoute"));
+app.use('/api/search',require("./routes/searchRoute"));
+app.use('/api/wallet',require("./routes/walletRoute"));
 
 const port = 9090;
 

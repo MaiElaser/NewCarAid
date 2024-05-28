@@ -19,6 +19,9 @@ app.use(cors());
 app.get("/", (req, res) => res.send("Hello world!"));
 
 app.use("/api/users", require("./routes/userRoute"));
+
+app.use("/api/vehicle", require("./routes/vehicleRoute"));
+
 app.use("/api/location", require("./routes/locationRoute")); // Add this line
 app.use("/api/upload", require("./routes/multerRoute")); // Mount MulterRoute to handle file uploads
 

@@ -146,6 +146,7 @@ const resetPassword = async (req, res) => {
 };
 
 // Register Vehicle
+/*
 const registerVehicle = asyncHandler(async (req, res) => {
   const { carType, brand, model, manufacturer, plateNo, color } = req.body;
 
@@ -196,7 +197,7 @@ const registerVehicle = asyncHandler(async (req, res) => {
     console.error("Error creating vehicle:", error);
     return res.status(500).json({ error: "Failed to register vehicle" });
   }
-});
+});*/
 
 module.exports = {
   registerUser,
@@ -204,5 +205,5 @@ module.exports = {
   currentUser,
   forgetPassword,
   resetPassword,
-  registerVehicle,
+  
 };

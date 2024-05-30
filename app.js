@@ -16,22 +16,22 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => res.send("Hello world!"));
+app.get("/", (req, res) => res.send("Hello world!"));//AA
 
-app.use("/api/users", require("./routes/userRoute"));
+app.use("/api/users", require("./routes/userRoute")); //HH
 
-app.use("/api/vehicle", require("./routes/vehicleRoute"));
+app.use("/api/vehicle", require("./routes/vehicleRoute"));//MMM
 
-app.use("/api/location", require("./routes/locationRoute")); // Add this line
-app.use("/api/upload", require("./routes/multerRoute")); // Mount MulterRoute to handle file uploads
+app.use("/api/location", require("./routes/locationRoute")); // EEE
+app.use("/api/upload", require("./routes/multerRoute")); // DDD
 
-app.use("/api/users/bank",require("./routes/bankRoute"),validateToken);
+app.use("/api/users/bank",require("./routes/bankRoute"),validateToken); //HHH
 
-app.use("/api/subscription", require("./routes/subscriptionRoute"));
-app.use("/api/records", require("./routes/records"));
+app.use("/api/subscription", require("./routes/subscriptionRoute"));//AAA
+app.use("/api/records", require("./routes/records"));//MMM
 
-app.use('/api/search',require("./routes/searchRoute"));
-app.use('/api/wallet',require("./routes/walletRoute"));
+app.use('/api/search',require("./routes/searchRoute"));//DDD
+app.use('/api/wallet',require("./routes/walletRoute"));//YYY
 
 const port = 9090;
 

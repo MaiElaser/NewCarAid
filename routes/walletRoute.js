@@ -1,11 +1,14 @@
 const express = require('express');
-const { getWalletBalance, addFunds, withdrawFunds } = require('../controllers/walletController');
+const { getWalletBalance, addFunds, withdrawFunds, createWalletForUser, deleteWalletForUser } = require('../controllers/walletController');
+const  validateToken  = require('../middleware/validateTokenHandler');
 
 const router = express.Router();
 
-router.get('/:userId', getWalletBalance);
-router.post('/:userId/add', addFunds);
-router.post('/:userId/withdraw', withdrawFunds);
+router.get('/getWalletBalance',validateToken, getWalletBalance);
+router.post('/addFunds',validateToken, addFunds);
+router.post('/withdraw',validateToken, withdrawFunds);
+router.post('/createWalletForUser',validateToken, createWalletForUser);
+router.delete('/deleteWalletForUser',validateToken, deleteWalletForUser);
 
 module.exports = router;
 

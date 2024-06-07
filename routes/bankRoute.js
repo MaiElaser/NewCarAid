@@ -17,7 +17,11 @@ const bankController = require('../controllers/bankController');
 const { validateToken } = bankController;
 
 // POST request to update bank details with validateToken middleware
-router.post('/updateBankDetails', validateToken, bankController.updateUserBankDetails);
+router.put('/updateBankDetails/:bankDetailsId', validateToken, bankController.updateUserBankDetails);
+router.get('/getBankDetails', validateToken, bankController.getBankDetails);
+router.get('/getBankDetailsByCardNumber/:id', validateToken, bankController.getBankDetailsByCardNumber);
+router.post('/addUserBankDetails', validateToken, bankController.addUserBankDetails);
+router.delete('/deleteUserBankDetails/:id', validateToken, bankController.deleteUserBankDetails);
 
 module.exports = router;
 

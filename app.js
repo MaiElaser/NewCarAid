@@ -32,6 +32,8 @@ app.use("/api/records", require("./routes/records"));//MMM
 
 app.use('/api/search',require("./routes/searchRoute"));//DDD
 app.use('/api/wallet',require("./routes/walletRoute"));//YYY
+app.use("/api/profile", require("./routes/profileRoutes"));
+
 
 const port = 9090;
 

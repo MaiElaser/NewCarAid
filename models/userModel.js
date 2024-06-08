@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter the password"],
     },
-   /* category: {
+    /* category: {
       type: String,
       required: [true, "Category yourself / Type of service"],
       enum: categoryOptions,
@@ -39,10 +39,10 @@ const userSchema = new mongoose.Schema(
     vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" }],
     bankDetails: { type: mongoose.Schema.Types.ObjectId, ref: "Bank" },
     wallet: { type: mongoose.Schema.Types.ObjectId, ref: "Wallet" },
-    subscription: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UserSubscription",
-    },
+    // subscription: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "UserSubscription",
+    // },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
     files: [
@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Plugin for passport-local-mongoose

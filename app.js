@@ -70,7 +70,7 @@ Promise.all([
       { default: Wallet }, // Destructure the Vehicle model import
       { default: File }, // Destructure the Vehicle model import
     ]) => {
-      const PORT = 3000;
+      const PORT = 9090;
 
       // Register the AdminJS Mongoose adapter
       AdminJS.registerAdapter({
@@ -150,7 +150,6 @@ Promise.all([
           const admin = new AdminJS(adminOptions);
           console.log("AdminJS instance created with options:", adminOptions);
 
-          const app = express();
           const adminRouter = AdminJSExpress.buildRouter(admin);
           console.log("Admin router created");
 
@@ -175,4 +174,4 @@ Promise.all([
 
 const PORT = 3000;
 
-app.listen(9090, () => console.log(`Server running on port ${port}`));
+// app.listen(9090, () => console.log(`Server running on port ${port}`));
